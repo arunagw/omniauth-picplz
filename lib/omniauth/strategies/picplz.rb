@@ -19,6 +19,19 @@ module OmniAuth
           :grant_type => 'authorization_code'}))
       end
 
+      info do
+        {
+          :display_name => raw_info['display_name']
+        }
+      end
+
+      def raw_info
+        access_token.options[:mode] = :query
+        access_token.options[:param_name] = :oauth_token
+        response = access_token.get('https://api.picplz.com/api/v2/user.json?id=self').parsed['value']
+        @raw_info ||= response['users'].last
+      end
+
       private
       
       def client_params
